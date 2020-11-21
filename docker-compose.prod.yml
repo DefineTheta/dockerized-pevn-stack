@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  # Postgres backend database
+  database:
+    volumes:
+      - ./database/production:/var/lib/postgresql/data
+
+  # NGINX Web Server
+  web-server:
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./client/www:/www
+
+  # Backend API Node.js server
+  node-server:
+    command: npm start
+    environment:
+      - NODE_ENV=production

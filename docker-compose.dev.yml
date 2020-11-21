@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  # Postgres backend database
+  database:
+    volumes:
+      - ./database/development:/var/lib/postgresql/data
+
+  # Postgres backend database
+  database-admin:
+    image: dpage/pgadmin4
+    container_name: elemental_database_admin
+    volumes:
+      - ./database/pgadmin:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+
+  # NGINX Web Server
+  web-server:
+    depends_on:
+      - database-admin
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf
+
+  # Backend API Node.js server
+  node-server:
+    command: npm start
+    environment:
+      - NODE_ENV=development
